@@ -10,7 +10,7 @@ import axios from 'axios';
 <script>
 import axios from 'axios'
 
-axios.get('http://localhost:7777')
+axios.get('http://localhost:8080')
   .then(function (response) {
     // handle success
     // console.log("response")
