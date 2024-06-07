@@ -33,7 +33,7 @@ export default {
         })
     },
     fetchMyPostsFromRender () {
-      axios.get('https://forum-webtech-frontend.onrender.com/post')
+      axios.get('https://forum-webtech.onrender.com')
         .then(response => {
           this.posts = response.data
         })
