@@ -1,27 +1,41 @@
-import axios from 'axios';
-
 <template>
-  <br>
-<h1>Posts</h1>
-  <button type="button">My posts</button>
-  <button type="button">My comments</button>
+  <div>
+    <h1>Posts</h1>
+    <button type="button" @click="fetchMyPosts">My posts</button>
+    <button type="button">My comments</button>
+    <div v-if="posts.length">
+      <h2>My Posts:</h2>
+      <ul>
+        <li v-for="post in posts" :key="post.id">{{ post.title }}</li>
+      </ul>
+    </div>
+  </div>
 </template>
 
 <script>
 import axios from 'axios'
 
-axios.get('http://localhost:7777')
-  .then(function (response) {
-    // handle success
-    // console.log("response")
-    console.log(response)
-    // .value = response.data
-  })
 export default {
-  name: 'Post'
+  name: 'Post',
+  data () {
+    return {
+      posts: []
+    }
+  },
+  methods: {
+    fetchMyPosts () {
+      axios.get('http://localhost:8080/post')
+        .then(response => {
+          this.posts = response.data
+        })
+        .catch(error => {
+          console.error('There was an error fetching the posts!', error)
+        })
+    }
+  }
 }
 </script>
 
 <style scoped>
-
+/* Add any specific styles here */
 </style>
