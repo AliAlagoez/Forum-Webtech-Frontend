@@ -2,7 +2,7 @@
   <div>
     <h1>Posts</h1>
     <button type="button" @click="fetchMyPosts">My posts</button>
-    <button type="button">My comments</button>
+    <button type="button" @click="fetchMyPostsFromRender">My comments</button>
     <div v-if="posts.length">
       <h2>My Posts:</h2>
       <ul>
@@ -29,7 +29,16 @@ export default {
           this.posts = response.data
         })
         .catch(error => {
-          console.error('There was an error fetching the posts!', error)
+          console.error('There was an error fetching the posts from localhost!', error)
+        })
+    },
+    fetchMyPostsFromRender () {
+      axios.get('https://forum-webtech-frontend.onrender.com/post')
+        .then(response => {
+          this.posts = response.data
+        })
+        .catch(error => {
+          console.error('There was an error fetching the posts from Render!', error)
         })
     }
   }
@@ -37,5 +46,4 @@ export default {
 </script>
 
 <style scoped>
-/* Add any specific styles here */
 </style>
