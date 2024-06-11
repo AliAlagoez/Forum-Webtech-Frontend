@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     fetchMyPosts () {
-      axios.get('http://localhost:8080/post')
+      axios.get('http://localhost:8080/post', 'https://forum-webtech.onrender.com/post')
         .then(response => {
           this.posts = response.data
         })
@@ -33,7 +33,7 @@ export default {
         })
     },
     fetchMyPostsFromRender () {
-      axios.get('https://forum-webtech.onrender.com/post')
+      axios.getRoot('https://forum-webtech.onrender.com/post')
         .then(response => {
           this.posts = response.data
         })
