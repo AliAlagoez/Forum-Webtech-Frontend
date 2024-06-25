@@ -4,7 +4,7 @@
     <button type="button" @click="fetchMyPosts">My posts</button>
     <button type="button" @click="fetchMyPostsFromRender">My comments</button>
     <h2>New Post</h2>
-    <form @submit.prevent="submitNewPost">
+    <form @submit.prevent="submitPost">
       <input v-model="newPost.title" type="text" placeholder="Enter new post title" required />
       <input v-model="newPost.content" type="text" placeholder="Enter new post content" required />
       <input v-model="newPost.author" type="text" placeholder="Enter author" required />
@@ -28,6 +28,9 @@
 import axios from 'axios'
 import { defineComponent } from 'vue'
 
+const API_BASE_URL = 'http://localhost:8080/Post/post' // Base URL for local
+const RENDER_API_BASE_URL = 'https://forum-webtech.onrender.com/Post/post' // Base URL for Render
+
 export default defineComponent({
   name: 'Post',
   data () {
@@ -42,7 +45,7 @@ export default defineComponent({
   },
   methods: {
     fetchMyPosts () {
-      axios.get('http://localhost:8080/Post/post')
+      axios.get(API_BASE_URL)
         .then(response => {
           this.posts = response.data
         })
@@ -51,7 +54,7 @@ export default defineComponent({
         })
     },
     fetchMyPostsFromRender () {
-      axios.get('https://forum-webtech.onrender.com/Post/post')
+      axios.get(RENDER_API_BASE_URL)
         .then(response => {
           this.posts = response.data
         })
@@ -59,11 +62,14 @@ export default defineComponent({
           console.error('There was an error fetching the posts from Render!', error)
         })
     },
-    submitNewPost () {
-      axios.post('http://localhost:8080/Post/post', 'https://forum-webtech.onrender.com/Post/post', this.newPost)
+    submitPost () {
+      // Determine which URL to use based on condition
+      const url = this.posts.length > 0 ? RENDER_API_BASE_URL : API_BASE_URL
+
+      axios.post(url, this.newPost)
         .then(response => {
           console.log('Post submitted!', response)
-          this.fetchMyPosts()
+          this.fetchMyPosts() // Always fetch from local after submission
           this.newPost.title = ''
           this.newPost.content = ''
           this.newPost.author = ''
