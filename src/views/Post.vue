@@ -60,7 +60,7 @@ export default defineComponent({
         })
     },
     submitNewPost () {
-      axios.post('http://localhost:8080/Post/post','https://forum-webtech.onrender.com/Post/post' , this.newPost)
+      axios.post('http://localhost:8080/Post/post', 'https://forum-webtech.onrender.com/Post/post', this.newPost)
         .then(response => {
           console.log('Post submitted!', response)
           this.fetchMyPosts()
