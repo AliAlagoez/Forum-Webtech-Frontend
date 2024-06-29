@@ -34,6 +34,7 @@
             <button v-if="editPostId !== post.id" @click="enableEditPost(post)">Edit</button>
             <button v-else @click="saveEditPost(post.id)">Save</button>
             <button v-if="editPostId === post.id" @click="cancelEditPost">Cancel</button>
+            <button @click="deletePost(post.id)">Delete</button> <!-- Neuer Delete-Button -->
           </td>
         </tr>
         </tbody>
@@ -87,20 +88,29 @@ export default defineComponent({
         })
     },
     submitPost () {
-      // Determine which URL to use based on condition
-      const url = this.posts.length > 0 ? RENDER_API_BASE_URL : API_BASE_URL
+      const localUrl = API_BASE_URL
+      const renderUrl = RENDER_API_BASE_URL
 
-      axios.post(url, this.newPost)
+      axios.post(localUrl, this.newPost)
         .then(response => {
-          console.log('Post submitted!', response)
-          this.fetchMyPosts() // Always fetch from local after submission
-          this.newPost.title = ''
-          this.newPost.content = ''
-          this.newPost.author = ''
+          console.log('Post submitted to local server!', response)
+          this.fetchMyPosts()
         })
         .catch(error => {
-          console.error('There was an error submitting the post!', error)
+          console.error('There was an error submitting the post to the local server!', error)
         })
+
+      axios.post(renderUrl, this.newPost)
+        .then(response => {
+          console.log('Post submitted to render server!', response)
+        })
+        .catch(error => {
+          console.error('There was an error submitting the post to the render server!', error)
+        })
+
+      this.newPost.title = ''
+      this.newPost.content = ''
+      this.newPost.author = ''
     },
     toggleMyPosts () {
       this.showPosts = !this.showPosts
@@ -114,11 +124,11 @@ export default defineComponent({
       this.editPost.content = post.content
     },
     saveEditPost (postId) {
-      const url = `${API_BASE_URL}/${postId}` // Adjust URL based on your backend API
+      const url = `${API_BASE_URL}/${postId}`
       axios.put(url, this.editPost)
         .then(response => {
           console.log('Post updated!', response)
-          this.fetchMyPosts() // Fetch updated posts
+          this.fetchMyPosts()
           this.editPostId = null
           this.editPost.title = ''
           this.editPost.content = ''
@@ -131,6 +141,27 @@ export default defineComponent({
       this.editPostId = null
       this.editPost.title = ''
       this.editPost.content = ''
+    },
+    deletePost (postId) {
+      const localUrl = `${API_BASE_URL}/${postId}`
+      const renderUrl = `${RENDER_API_BASE_URL}/${postId}`
+
+      axios.delete(localUrl)
+        .then(response => {
+          console.log('Post deleted from local server!', response)
+          this.fetchMyPosts()
+        })
+        .catch(error => {
+          console.error('There was an error deleting the post from the local server!', error)
+        })
+
+      axios.delete(renderUrl)
+        .then(response => {
+          console.log('Post deleted from render server!', response)
+        })
+        .catch(error => {
+          console.error('There was an error deleting the post from the render server!', error)
+        })
     }
   },
   mounted () {
