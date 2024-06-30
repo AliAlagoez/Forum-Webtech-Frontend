@@ -39,15 +39,13 @@ export default {
 </script>
 
 <style scoped>
-
 .navbar-brand{
   font-size: xx-large;
   font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif
-
 }
 
- .nav-link{
-   font-size: large;
- font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif
- }
+.nav-link{
+  font-size: large;
+  font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif
+}
 </style>
