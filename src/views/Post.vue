@@ -40,10 +40,8 @@
             </button>
           </td>
           <td>
-            <button v-if="!hasVoted(post.id, 'up')" @click="votePost(post.id, 'up')" class="btn">👍</button>
-            <button v-if="!hasVoted(post.id, 'down')" @click="votePost(post.id, 'down')" class="btn">👎</button>
-            <span v-if="hasVoted(post.id, 'up')">👍 Upvoted</span>
-            <span v-if="hasVoted(post.id, 'down')">👎 Downvoted</span>
+            <button @click="votePost(post.id, 'up')" :class="['btn', hasVoted(post.id, 'up') ? 'btn-upvoted' : '']">👍</button>
+            <button @click="votePost(post.id, 'down')" :class="['btn', hasVoted(post.id, 'down') ? 'btn-downvoted' : '']">👎</button>
           </td>
         </tr>
         </tbody>
@@ -149,22 +147,28 @@ export default defineComponent({
         })
     },
     votePost (postId, type) {
+      const existingVote = this.votedPosts.find(vote => vote.postId === postId)
+      if (existingVote) {
+        // If user already voted the same type, remove the vote
+        if (existingVote.type === type) {
+          this.votedPosts = this.votedPosts.filter(vote => vote.postId !== postId)
+        } else {
+          // If user voted differently before, change the vote type
+          existingVote.type = type
+        }
+      } else {
+        this.votedPosts.push({
+          postId,
+          type
+        })
+      }
+      // Save votes to localStorage
+      this.saveVotes()
+      // Send vote to server (optional, can be moved out of this function)
       const url = `${RENDER_API_BASE_URL}/${postId}/vote`
       axios.put(url, { type })
         .then(response => {
           console.log('Vote recorded!', response.data)
-          // Update the post's vote counts
-          const post = this.posts.find(post => post.id === postId)
-          if (type === 'up') {
-            post.upvotes++
-          } else if (type === 'down') {
-            post.downvotes++
-          }
-          // Store that this post has been voted on
-          this.votedPosts.push({
-            postId,
-            type
-          })
         })
         .catch(error => {
           console.error('There was an error recording the vote!', error)
@@ -195,11 +199,21 @@ export default defineComponent({
       if (favorites) {
         this.favorites = JSON.parse(favorites)
       }
+    },
+    saveVotes () {
+      localStorage.setItem('votedPosts', JSON.stringify(this.votedPosts))
+    },
+    loadVotes () {
+      const votes = localStorage.getItem('votedPosts')
+      if (votes) {
+        this.votedPosts = JSON.parse(votes)
+      }
     }
   },
   mounted () {
     this.fetchMyPosts()
     this.loadFavorites()
+    this.loadVotes()
   }
 })
 </script>
@@ -264,6 +278,16 @@ th {
 }
 
 .text-yellow-400 {
-  color: #ffd700; /* Gelbe Farbe für den Stern */
+  color: #ffd700; /* Yellow color for the star */
+}
+
+.btn-upvoted {
+  background-color: #28a745; /* Green for upvote */
+  color: white;
+}
+
+.btn-downvoted {
+  background-color: #dc3545; /* Red for downvote */
+  color: white;
 }
 </style>
