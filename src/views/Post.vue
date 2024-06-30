@@ -1,13 +1,13 @@
 <template>
   <div>
     <h1>Posts</h1>
-    <button type="button" @click="toggleMyPosts">My posts</button>
+    <button type="button" @click="toggleMyPosts" class="btn">My posts</button>
     <h2>New Post</h2>
     <form @submit.prevent="submitPost">
       <input v-model="newPost.title" type="text" placeholder="Enter new post title" required />
       <input v-model="newPost.content" type="text" placeholder="Enter new post content" required />
       <input v-model="newPost.author" type="text" placeholder="Enter author" required />
-      <button type="submit">Submit</button>
+      <button type="submit" class="btn">Submit</button>
     </form>
     <div v-if="showPosts && posts.length">
       <h2>My Posts:</h2>
@@ -19,8 +19,7 @@
           <th>Author</th>
           <th>Created At</th>
           <th>Actions</th>
-          <th>Upvotes</th>
-          <th>Downvotes</th>
+          <th>Rate</th>
         </tr>
         </thead>
         <tbody>
@@ -32,18 +31,19 @@
           <td>{{ post.author }}</td>
           <td>{{ new Date(post.createdAt).toLocaleString() }}</td>
           <td>
-            <button v-if="editPostId !== post.id" @click="enableEditPost(post)">Edit</button>
-            <button v-else @click="saveEditPost(post.id)">Save</button>
-            <button v-if="editPostId === post.id" @click="cancelEditPost">Cancel</button>
-            <button @click="deletePost(post.id)">Delete</button>
+            <button v-if="editPostId !== post.id" @click="enableEditPost(post)" class="btn">Edit</button>
+            <button v-else @click="saveEditPost(post.id)" class="btn">Save</button>
+            <button v-if="editPostId === post.id" @click="cancelEditPost" class="btn">Cancel</button>
+            <button @click="confirmDeletePost(post.id)" class="btn btn-delete">Delete</button>
+            <button @click="toggleFavorite(post)" :class="['btn', isFavorite(post) ? 'btn-secondary' : 'btn-primary']">
+              <span :class="{'text-yellow-400': isFavorite(post)}">★</span>
+            </button>
           </td>
-          <td>{{ post.upvotes }}</td>
-          <td>{{ post.downvotes }}</td>
           <td>
-            <button v-if="!hasVoted(post.id, 'up')" @click="votePost(post.id, 'up')">Upvote</button>
-            <button v-if="!hasVoted(post.id, 'down')" @click="votePost(post.id, 'down')">Downvote</button>
-            <span v-if="hasVoted(post.id, 'up')">Upvoted</span>
-            <span v-if="hasVoted(post.id, 'down')">Downvoted</span>
+            <button v-if="!hasVoted(post.id, 'up')" @click="votePost(post.id, 'up')" class="btn">👍</button>
+            <button v-if="!hasVoted(post.id, 'down')" @click="votePost(post.id, 'down')" class="btn">👎</button>
+            <span v-if="hasVoted(post.id, 'up')">👍 Upvoted</span>
+            <span v-if="hasVoted(post.id, 'down')">👎 Downvoted</span>
           </td>
         </tr>
         </tbody>
@@ -74,7 +74,8 @@ export default defineComponent({
       },
       editPostId: null,
       showPosts: false,
-      votedPosts: [] // Array to store IDs of posts that user has voted on
+      votedPosts: [], // Array to store IDs of posts that user has voted on
+      favorites: [] // Array to store favorite posts
     }
   },
   methods: {
@@ -131,6 +132,11 @@ export default defineComponent({
       this.editPost.title = ''
       this.editPost.content = ''
     },
+    confirmDeletePost (postId) {
+      if (confirm('Are you sure you want to delete this post?')) {
+        this.deletePost(postId)
+      }
+    },
     deletePost (postId) {
       const url = `${RENDER_API_BASE_URL}/${postId}`
       axios.delete(url)
@@ -144,9 +150,9 @@ export default defineComponent({
     },
     votePost (postId, type) {
       const url = `${RENDER_API_BASE_URL}/${postId}/vote`
-      axios.post(url, { type })
+      axios.put(url, { type })
         .then(response => {
-          console.log('Vote recorded!', response)
+          console.log('Vote recorded!', response.data)
           // Update the post's vote counts
           const post = this.posts.find(post => post.id === postId)
           if (type === 'up') {
@@ -166,10 +172,34 @@ export default defineComponent({
     },
     hasVoted (postId, type) {
       return this.votedPosts.some(vote => vote.postId === postId && vote.type === type)
+    },
+    toggleFavorite (post) {
+      const index = this.favorites.findIndex(fav => fav.id === post.id)
+      if (index === -1) {
+        this.favorites.push(post)
+        console.log('Added to favorites:', post)
+      } else {
+        this.favorites.splice(index, 1)
+        console.log('Removed from favorites:', post)
+      }
+      this.saveFavorites()
+    },
+    isFavorite (post) {
+      return this.favorites.some(fav => fav.id === post.id)
+    },
+    saveFavorites () {
+      localStorage.setItem('favorites', JSON.stringify(this.favorites))
+    },
+    loadFavorites () {
+      const favorites = localStorage.getItem('favorites')
+      if (favorites) {
+        this.favorites = JSON.parse(favorites)
+      }
     }
   },
   mounted () {
     this.fetchMyPosts()
+    this.loadFavorites()
   }
 })
 </script>
@@ -188,5 +218,52 @@ th, td {
 
 th {
   background-color: #f2f2f2;
+}
+
+.btn {
+  padding: 8px 12px;
+  margin: 4px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8; /* Light gray, almost white */
+  color: #333;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+  background-color: #e0e0e0; /* Slightly darker gray for hover effect */
+}
+
+.btn-primary {
+  background-color: #ffd700;
+  color: #333;
+}
+
+.btn-primary:hover {
+  background-color: #f0c500;
+}
+
+.btn-secondary {
+  background-color: #f8f8f8;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-delete {
+  background-color: #f8f8f8;
+  color: #333;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+  color: #fff;
+}
+
+.text-yellow-400 {
+  color: #ffd700; /* Gelbe Farbe für den Stern */
 }
 </style>
