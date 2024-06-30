@@ -14,7 +14,6 @@
           <router-link class="nav-link" to="/about">About</router-link>
           <router-link class="nav-link" to="/post">Posts</router-link>
           <!-- Neuer Punkt 'Comment' -->
-          <router-link class="nav-link" to="/comment">Comment</router-link>
           <!-- Dropdown-Menü 'Genre' -->
           <div class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -24,7 +23,6 @@
               <li><router-link class="dropdown-item" to="/genre/anime">Anime</router-link></li>
               <li><router-link class="dropdown-item" to="/genre/science-fiction">Science Fiction</router-link></li>
               <li><router-link class="dropdown-item" to="/genre/fantasy">Fantasy</router-link></li>
-              <li><router-link class="dropdown-item" to="/genre/horror">Horror</router-link></li>
               <li><router-link class="dropdown-item" to="/genre/romance">Romance</router-link></li>
               <li><router-link class="dropdown-item" to="/genre/mystery">Mystery</router-link></li>
             </ul>
