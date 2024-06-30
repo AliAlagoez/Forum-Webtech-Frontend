@@ -13,6 +13,9 @@
           <router-link class="nav-link" to="/">Home </router-link>
           <router-link class="nav-link" to="/about">About</router-link>
           <router-link class="nav-link" to="/post">Posts</router-link>
+          <!-- Neuer Punkt 'Comment' -->
+          <router-link class="nav-link" to="/comment">Comment</router-link>
+          <!-- Dropdown-Menü 'Genre' -->
           <div class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Genre
@@ -39,13 +42,13 @@ export default {
 </script>
 
 <style scoped>
-.navbar-brand{
+.navbar-brand {
   font-size: xx-large;
-  font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif
+  font-family: MathJax_Script, 'Times New Roman', Times, STIXGeneral, serif;
 }
 
-.nav-link{
+.nav-link {
   font-size: large;
-  font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif
+  font-family: MathJax_Script, 'Times New Roman', Times, STIXGeneral, serif;
 }
 </style>
