@@ -22,7 +22,7 @@ import AnimeBanner from '@/components/AnimeBanner.vue'
 import FantasyBanner from '@/components/FantasyBanner.vue'
 import ScienceFictionBanner from '@/components/ScienceFictionBanner.vue'
 import MysteryBanner from '@/components/MysteryBanner'
-import HorroBanner from '@/components/HorrorBanner'
+import HorrorBanner from '@/components/HorrorBanner'
 import RomanceBanner from '@/components/RomanceBanner'
 
 export default {
@@ -32,7 +32,7 @@ export default {
     FantasyBanner,
     ScienceFictionBanner,
     MysteryBanner,
-    HorroBanner,
+    HorrorBanner,
     RomanceBanner
   },
   data () {

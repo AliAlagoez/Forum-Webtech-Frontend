@@ -26,7 +26,7 @@ export default {
 }
 
 .horror-banner {
-  background-image: url('@/assets/anime-banner.jpg');
+  background-image: url('@/assets/horror-banner.jpg');
 }
 
 .banner-content {
