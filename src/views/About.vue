@@ -13,7 +13,7 @@
     <div class="card mb-3">
       <div class="card-body">
         <h5 class="card-title">The Founders</h5>
-        <p class="card-text">Fiction Forum was founded by Ali Alagöz and Amin Tekaya. Ali is an avid fan of science fiction, while Amin has a particular interest in romance, showcasing a passion for engaging love stories.</p>
+        <p class="card-text">Fiction Forum was founded by Ali Alagöz and Amin Tekaya. Ali is an avid fan of science fiction, while Amin has a particular interest in Anime and Fantasy.</p>
       </div>
     </div>
 
