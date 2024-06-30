@@ -19,6 +19,8 @@
           <th>Author</th>
           <th>Created At</th>
           <th>Actions</th>
+          <th>Upvotes</th>
+          <th>Downvotes</th>
         </tr>
         </thead>
         <tbody>
@@ -35,6 +37,14 @@
             <button v-if="editPostId === post.id" @click="cancelEditPost">Cancel</button>
             <button @click="deletePost(post.id)">Delete</button>
           </td>
+          <td>{{ post.upvotes }}</td>
+          <td>{{ post.downvotes }}</td>
+          <td>
+            <button v-if="!hasVoted(post.id, 'up')" @click="votePost(post.id, 'up')">Upvote</button>
+            <button v-if="!hasVoted(post.id, 'down')" @click="votePost(post.id, 'down')">Downvote</button>
+            <span v-if="hasVoted(post.id, 'up')">Upvoted</span>
+            <span v-if="hasVoted(post.id, 'down')">Downvoted</span>
+          </td>
         </tr>
         </tbody>
       </table>
@@ -46,7 +56,7 @@
 import axios from 'axios'
 import { defineComponent } from 'vue'
 
-const RENDER_API_BASE_URL = 'https://forum-webtech.onrender.com/Post/post' // Base URL for Render
+const RENDER_API_BASE_URL = 'https://forum-webtech.onrender.com/Post/post'
 
 export default defineComponent({
   name: 'Post',
@@ -63,7 +73,8 @@ export default defineComponent({
         content: ''
       },
       editPostId: null,
-      showPosts: false
+      showPosts: false,
+      votedPosts: [] // Array to store IDs of posts that user has voted on
     }
   },
   methods: {
@@ -130,6 +141,31 @@ export default defineComponent({
         .catch(error => {
           console.error('There was an error deleting the post from the render server!', error)
         })
+    },
+    votePost (postId, type) {
+      const url = `${RENDER_API_BASE_URL}/${postId}/vote`
+      axios.post(url, { type })
+        .then(response => {
+          console.log('Vote recorded!', response)
+          // Update the post's vote counts
+          const post = this.posts.find(post => post.id === postId)
+          if (type === 'up') {
+            post.upvotes++
+          } else if (type === 'down') {
+            post.downvotes++
+          }
+          // Store that this post has been voted on
+          this.votedPosts.push({
+            postId,
+            type
+          })
+        })
+        .catch(error => {
+          console.error('There was an error recording the vote!', error)
+        })
+    },
+    hasVoted (postId, type) {
+      return this.votedPosts.some(vote => vote.postId === postId && vote.type === type)
     }
   },
   mounted () {
