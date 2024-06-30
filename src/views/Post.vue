@@ -2,7 +2,6 @@
   <div>
     <h1>Posts</h1>
     <button type="button" @click="toggleMyPosts">My posts</button>
-    <button type="button" @click="fetchMyPostsFromRender">My comments</button>
     <h2>New Post</h2>
     <form @submit.prevent="submitPost">
       <input v-model="newPost.title" type="text" placeholder="Enter new post title" required />
@@ -34,7 +33,7 @@
             <button v-if="editPostId !== post.id" @click="enableEditPost(post)">Edit</button>
             <button v-else @click="saveEditPost(post.id)">Save</button>
             <button v-if="editPostId === post.id" @click="cancelEditPost">Cancel</button>
-            <button @click="deletePost(post.id)">Delete</button> <!-- Neuer Delete-Button -->
+            <button @click="deletePost(post.id)">Delete</button>
           </td>
         </tr>
         </tbody>
@@ -47,7 +46,6 @@
 import axios from 'axios'
 import { defineComponent } from 'vue'
 
-const API_BASE_URL = 'http://localhost:8080/Post/post' // Base URL for local
 const RENDER_API_BASE_URL = 'https://forum-webtech.onrender.com/Post/post' // Base URL for Render
 
 export default defineComponent({
@@ -64,13 +62,13 @@ export default defineComponent({
         title: '',
         content: ''
       },
-      editPostId: null, // New state to track the post being edited
-      showPosts: false // New state to track whether to show posts or not
+      editPostId: null,
+      showPosts: false
     }
   },
   methods: {
     fetchMyPosts () {
-      axios.get(API_BASE_URL)
+      axios.get(RENDER_API_BASE_URL)
         .then(response => {
           this.posts = response.data
         })
@@ -78,31 +76,11 @@ export default defineComponent({
           console.error('There was an error fetching the posts!', error)
         })
     },
-    fetchMyPostsFromRender () {
-      axios.get(RENDER_API_BASE_URL)
-        .then(response => {
-          this.posts = response.data
-        })
-        .catch(error => {
-          console.error('There was an error fetching the posts from Render!', error)
-        })
-    },
     submitPost () {
-      const localUrl = API_BASE_URL
-      const renderUrl = RENDER_API_BASE_URL
-
-      axios.post(localUrl, this.newPost)
-        .then(response => {
-          console.log('Post submitted to local server!', response)
-          this.fetchMyPosts()
-        })
-        .catch(error => {
-          console.error('There was an error submitting the post to the local server!', error)
-        })
-
-      axios.post(renderUrl, this.newPost)
+      axios.post(RENDER_API_BASE_URL, this.newPost)
         .then(response => {
           console.log('Post submitted to render server!', response)
+          this.fetchMyPosts()
         })
         .catch(error => {
           console.error('There was an error submitting the post to the render server!', error)
@@ -124,7 +102,7 @@ export default defineComponent({
       this.editPost.content = post.content
     },
     saveEditPost (postId) {
-      const url = `${API_BASE_URL}/${postId}`
+      const url = `${RENDER_API_BASE_URL}/${postId}`
       axios.put(url, this.editPost)
         .then(response => {
           console.log('Post updated!', response)
@@ -143,21 +121,11 @@ export default defineComponent({
       this.editPost.content = ''
     },
     deletePost (postId) {
-      const localUrl = `${API_BASE_URL}/${postId}`
-      const renderUrl = `${RENDER_API_BASE_URL}/${postId}`
-
-      axios.delete(localUrl)
-        .then(response => {
-          console.log('Post deleted from local server!', response)
-          this.fetchMyPosts()
-        })
-        .catch(error => {
-          console.error('There was an error deleting the post from the local server!', error)
-        })
-
-      axios.delete(renderUrl)
+      const url = `${RENDER_API_BASE_URL}/${postId}`
+      axios.delete(url)
         .then(response => {
           console.log('Post deleted from render server!', response)
+          this.fetchMyPosts()
         })
         .catch(error => {
           console.error('There was an error deleting the post from the render server!', error)
