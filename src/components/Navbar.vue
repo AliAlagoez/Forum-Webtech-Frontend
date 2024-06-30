@@ -23,6 +23,7 @@
               <li><router-link class="dropdown-item" to="/genre/anime">Anime</router-link></li>
               <li><router-link class="dropdown-item" to="/genre/science-fiction">Science Fiction</router-link></li>
               <li><router-link class="dropdown-item" to="/genre/fantasy">Fantasy</router-link></li>
+              <li><router-link class="dropdown-item" to="/genre/horror">Horror</router-link></li>
               <li><router-link class="dropdown-item" to="/genre/romance">Romance</router-link></li>
               <li><router-link class="dropdown-item" to="/genre/mystery">Mystery</router-link></li>
             </ul>
