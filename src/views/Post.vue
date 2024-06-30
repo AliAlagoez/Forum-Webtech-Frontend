@@ -35,8 +35,8 @@
             <button v-else @click="saveEditPost(post.id)" class="btn">Save</button>
             <button v-if="editPostId === post.id" @click="cancelEditPost" class="btn">Cancel</button>
             <button @click="confirmDeletePost(post.id)" class="btn btn-delete">Delete</button>
-            <button @click="toggleFavorite(post)" :class="['btn', isFavorite(post) ? 'btn-secondary' : 'btn-primary']">
-              <span :class="{'text-yellow-400': isFavorite(post)}">★</span>
+            <button @click="toggleFavorite(post)" :class="['btn', isFavorite(post) ? 'btn-primary' : 'btn-secondary']">
+              <span :class="{'text-yellow-400': isFavorite(post), 'text-black': isFavorite(post)}">★</span>
             </button>
           </td>
           <td>
@@ -275,6 +275,10 @@ th {
 .btn-delete:hover {
   background-color: #c82333;
   color: #fff;
+}
+
+.text-black {
+  color: #000; /* Schwarze Farbe für den Stern */
 }
 
 .text-yellow-400 {
